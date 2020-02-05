@@ -1,0 +1,4 @@
+{
+  "extends": "@musma",
+  "root": true
+}
