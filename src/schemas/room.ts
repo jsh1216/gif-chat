@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-// 명확한 타입을 선언
+// 타입을 선언한 interface
 export interface Room {
   _id: mongoose.Schema.Types.ObjectId
   createdAt: Date

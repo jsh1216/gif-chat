@@ -22,8 +22,9 @@ const sessionMiddleware = session({
   },
   resave: false,
   saveUninitialized: false,
-  secret: process.env.COOKIE_SECRET ?? '', //스트링 값만 허용이 되기 때문에 undefined는 허용하지 않는다 그렇기 때문에 ''
-  // secret: process.env.COOKIE_SECRET || ''
+  //스트링 값만 허용이 되기 때문에 undefined는 허용하지 않는다 그렇기 때문에 ??를 사용하여 비어 있는 값을 체크 해준다  ''
+  //??는 undefined와 null에만 적용 ||는 '', 0, false, undefined, null, NaN 등 적용
+  secret: process.env.COOKIE_SECRET ?? '',
 })
 
 app.set('views', path.join(__dirname, 'views'))
@@ -32,7 +33,6 @@ app.set('port', 8005)
 
 app.use(morgan('dev'))
 app.use(express.static(path.join(__dirname, 'public')))
-console.log(path.join(__dirname, 'uploads'))
 app.use('/gif', express.static(path.join(__dirname, 'uploads')))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
@@ -53,7 +53,7 @@ app.use(
     */
     if (req.session) {
       if (req.session.color) {
-        //이벤트 없음
+        //없음
       } else {
         const colorHash = new ColorHash()
         if (req.sessionID) {

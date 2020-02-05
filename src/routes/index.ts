@@ -47,13 +47,14 @@ router.post('/room', async (req, res, next) => {
 //방 들어가기
 router.get('/room/:id', async (req, res, next) => {
   try {
+    //DB조회를 해서 값을 document에 담아 줬다
     const document = await RoomSchema.findOne({ _id: req.params.id })
     const io = req.app.get('io')
     if (!document) {
       req.flash('roomError', '존재하지 않는 방입니다.')
       return res.redirect('/')
     }
-    const room: Room = document.toObject()
+    const room: Room = document.toObject() //인터페이스를 사용해 타입을 맞춰 준다
     if (room.password && room.password !== req.query.password) {
       req.flash('roomError', '비밀번호가 틀렸습니다.')
       return res.redirect('/')
