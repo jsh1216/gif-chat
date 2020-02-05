@@ -6,7 +6,6 @@ import session from 'express-session'
 import flash from 'connect-flash'
 import dotenv from 'dotenv'
 import ColorHash from 'color-hash'
-import errorHandler from 'errorhandler'
 
 import webSocket from './socket'
 import indexRouter from './routes'
@@ -14,9 +13,7 @@ import connect from './schemas'
 
 const app = express()
 connect()
-dotenv.config()
-
-app.use(errorHandler)
+dotenv.config({ path: path.join(__dirname, '.env') })
 
 const sessionMiddleware = session({
   cookie: {
@@ -26,14 +23,17 @@ const sessionMiddleware = session({
   resave: false,
   saveUninitialized: false,
   secret: process.env.COOKIE_SECRET ?? '', //스트링 값만 허용이 되기 때문에 undefined는 허용하지 않는다 그렇기 때문에 ''
+  // secret: process.env.COOKIE_SECRET || ''
 })
 
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'pug')
-app.set('port', process.env.PORT || 8005)
+app.set('port', 8005)
 
 app.use(morgan('dev'))
 app.use(express.static(path.join(__dirname, 'public')))
+console.log(path.join(__dirname, 'uploads'))
+app.use('/gif', express.static(path.join(__dirname, 'uploads')))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser(process.env.COOKIE_SECRET))

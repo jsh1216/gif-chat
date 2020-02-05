@@ -2,6 +2,9 @@ import express from 'express'
 
 import { Room, RoomSchema } from '../schemas/room'
 import { ChatSchema } from '../schemas/chat'
+import multer from 'multer'
+import path from 'path'
+import fs from 'fs'
 
 const router = express.Router()
 router.get('/', async (req, res, next) => {
@@ -22,6 +25,7 @@ router.get('/room', (req, res) => {
   res.render('room', { title: 'GIF 채팅방 생성' })
 })
 
+//방생성
 router.post('/room', async (req, res, next) => {
   try {
     const room = new RoomSchema({
@@ -40,6 +44,7 @@ router.post('/room', async (req, res, next) => {
   }
 })
 
+//방 들어가기
 router.get('/room/:id', async (req, res, next) => {
   try {
     const document = await RoomSchema.findOne({ _id: req.params.id })
@@ -62,8 +67,11 @@ router.get('/room/:id', async (req, res, next) => {
       req.flash('roomError', '허용 인원이 초과하였습니다.')
       return res.redirect('/')
     }
+    console.log(room._id)
+    const chats = await ChatSchema.find({ room: room._id }).sort('creaatedAt')
+
     return res.render('chat', {
-      chats: [],
+      chats,
       room,
       title: room.title,
       user: req.session?.color,
@@ -85,6 +93,77 @@ router.delete('/room/:id', async (req, res, next) => {
         .of('/room')
         .emit('removeRoom', req.params.id)
     }, 2000)
+  } catch (error) {
+    console.error(error)
+    next(error)
+  }
+})
+
+router.post(
+  '/room/:id/chat',
+  async (
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction,
+  ) => {
+    try {
+      const chat = new ChatSchema({
+        chat: req.body.chat,
+        room: req.params.id,
+        user: req.session?.color,
+      })
+
+      await chat.save()
+      req.app
+        .get('io')
+        .of('/chat')
+        .to(req.params.id)
+        .emit('chat', chat)
+      res.send('ok')
+    } catch (error) {
+      console.error(error)
+      next(error)
+    }
+  },
+)
+
+fs.readdir('lib/uploads', error => {
+  if (error) {
+    console.error('uploads 폴더가 없어서 uploads 폴더를 생성 합니다.')
+    fs.mkdirSync('lib/uploads')
+  }
+})
+
+const upload = multer({
+  limits: { fileSize: 5 * 1024 * 1024 },
+  storage: multer.diskStorage({
+    destination(req, file, cb) {
+      cb(null, 'lib/uploads/')
+    },
+    filename(req, file, cb) {
+      const ext = path.extname(file.originalname)
+      cb(
+        null,
+        path.basename(file.originalname, ext) + new Date().valueOf() + ext,
+      )
+    },
+  }),
+})
+
+router.post('/room/:id/gif', upload.single('gif'), async (req, res, next) => {
+  try {
+    const chat = new ChatSchema({
+      gif: req.file.filename,
+      room: req.params.id,
+      user: req.session?.color,
+    })
+    await chat.save()
+    req.app
+      .get('io')
+      .of('/chat')
+      .to(req.params.id)
+      .emit('chat', chat)
+    res.send('ok')
   } catch (error) {
     console.error(error)
     next(error)

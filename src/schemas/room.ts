@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 
 // 명확한 타입을 선언
 export interface Room {
+  _id: mongoose.Schema.Types.ObjectId
   createdAt: Date
   max: number
   owner: string

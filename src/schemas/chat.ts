@@ -8,6 +8,7 @@ import mongoose from 'mongoose'
 const { ObjectId } = mongoose.Schema.Types
 
 // export interface Chat {
+//   _id: mongoose.Schema.Types.ObjectId
 //   chat?: string
 //   createdAt: Date
 //   gif?: string
