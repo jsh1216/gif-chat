@@ -16,6 +16,7 @@ jobs:
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
 
+      - run: echo //npm.pkg.github.com/:_authToken=${GITHUB_TOKEN} > ~/.npmrc
       - run: yarn install
 
       - save_cache:
