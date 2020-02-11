@@ -18,7 +18,7 @@ jobs:
 
       - run:
           name: GitHub Package에 접근할 수 있도록 ~/.npmrc에 GITHUB_TOKEN 추가
-          coomand: echo //npm.pkg.github.com/:_authToken=${GITHUB_TOKEN} > ~/.npmrc
+          command: echo //npm.pkg.github.com/:_authToken=${GITHUB_TOKEN} > ~/.npmrc
       - run:
           name: node_modules 패키지 받아오기
           command: yarn install
