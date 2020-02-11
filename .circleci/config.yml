@@ -1,13 +1,11 @@
-version: 2
+version: 2 #언어버전
 jobs:
   build:
-    docker:
-      - image: circleci/node:12
+    docker: #도커 이미지 설치 세팅
+      - image: circleci/node:12 #node버전
 
-    steps:
-      - run: ls
+    steps: #깃 체크아웃
       - checkout
-      - run: ls
 
       # Download and cache dependencies
       - restore_cache:
@@ -16,9 +14,11 @@ jobs:
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
 
-      - run:
+      - run: #run 이름 설정 및 명령어
           name: GitHub Package에 접근할 수 있도록 ~/.npmrc에 GITHUB_TOKEN 추가
-          command: echo //npm.pkg.github.com/:_authToken=${GITHUB_TOKEN} > ~/.npmrc
+          #command: echo //npm.pkg.github.com/:_authToken=${GITHUB_TOKEN} > ~/.npmrc
+          command: npm set //npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
+            npm publish
       - run:
           name: node_modules 패키지 받아오기
           command: yarn install
