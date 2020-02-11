@@ -68,6 +68,7 @@ junit.xml
 # production
 build/
 dist/
+lib/
 
 # CDK asset staging directory
 .cdk.staging
