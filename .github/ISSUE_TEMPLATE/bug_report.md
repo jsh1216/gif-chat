@@ -2,7 +2,7 @@
 name: 버그 리포트
 about: 버그가 있다면 적어주세요
 title: '타이틀'
-labels: '레이블'
+labels: '버그'
 assignees: 'JSHdev'
 
 ---
