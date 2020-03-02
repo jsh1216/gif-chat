@@ -1,0 +1,51 @@
+name: master
+on:
+  push:
+    branches:
+      - master
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      CI: true
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+    steps:
+      - name: 체크아웃
+        uses: actions/checkout@v2
+
+      - name: Node 설치
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+
+      - name: Overwrite .npmrc
+        run: cp -f .ci.npmrc .npmrc
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - name: node_modules 캐시
+        uses: actions/cache@v1
+        id: node_modules-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
+          restore-keys: ${{ runner.os }}-yarn-
+
+      - name: node_modules 준비
+        run: yarn install
+
+      - name: 컴파일
+        run: yarn build
+
+      - name: 프로덕션 패키징
+        run: yarn package:production
+
+      - name: 업로드
+        uses: actions/upload-artifact@v1
+        with:
+          name: server
+          path: dist/server

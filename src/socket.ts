@@ -8,10 +8,10 @@ export default (
   app: express.Express,
   sessionMiddleware: express.RequestHandler,
 ) => {
-  const io = SocketIO(server, { path: '/socket.io' })
+  const io: SocketIO.Server = SocketIO(server, { path: '/socket.io' })
   app.set('io', io) // app.set('io', io)로 io객체를 쓸수 있게 저장 req.app.get('io')로 접근 가능 express 변수 저장 방법
-  const room = io.of('/room') // of는 Socket.io에 네임스페이스를 부여하는 메서드 기본적으론 /로 접근
-  const chat = io.of('/chat')
+  const room: SocketIO.Namespace = io.of('/room') // of는 Socket.io에 네임스페이스를 부여하는 메서드 기본적으론 /로 접근
+  const chat: SocketIO.Namespace = io.of('/chat')
 
   //익스프레스 미들웨어를 소켓에서 쓰는 방법
   io.use((socket, next) => {

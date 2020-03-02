@@ -41,7 +41,11 @@ app.use(sessionMiddleware)
 app.use(flash())
 
 app.use(
-  (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  (
+    req: express.Request,
+    _res: express.Response,
+    next: express.NextFunction,
+  ) => {
     /*
       물음표를 붙이게 되면 위에 물음표 이전에 있던 내용을 if문으로 처리 해주는 것과 동일하다
       if(req.session?color){} 는 아래와 동일
@@ -94,3 +98,10 @@ const server = app.listen(app.get('port'), () => {
 })
 
 webSocket(server, app, sessionMiddleware)
+
+function abc(a: string, b: number) {
+  a = 'dd'
+  b = 3
+}
+
+ab()
